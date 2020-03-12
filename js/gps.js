@@ -14,8 +14,8 @@ function getGPS(){
 
 function getGPSsuccess(pos){
   var crd = pos.coords;
-  console.log(crd.latitude);
-  console.log(crd.longitude);
+  document.getElementById("latitude").innerHTML="lat:"+crd.latitude;
+  document.getElementById("longitude").innerHTML="lon:"+crd.longitude;
 }
 function getGPSFailure(args){
   console.log("failure");
