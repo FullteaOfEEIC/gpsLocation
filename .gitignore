@@ -1,0 +1,12 @@
+
+flask/.DS_Store
+
+.DS_Store
+
+*.swp
+
+flask/__pycache__/
+
+mysql/mysql_data/#innodb_temp/
+
+mysql/mysql_data/

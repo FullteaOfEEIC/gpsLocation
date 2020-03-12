@@ -1,0 +1,37 @@
+version: '3.5'
+services:
+  db:
+    build: ./mysql/
+    volumes:
+      - ./mysql/mysql_data:/var/lib/mysql # データの永続化
+      - ./mysql/sqls:/docker-entrypoint-initdb.d #初期化時に実行するSQL
+    networks:
+      gps_net:
+        ipv4_address: 172.20.0.3
+    environment:
+      - MYSQL_ROOT_PASSWORD=hoshininegaiwo
+
+  webapp:
+    build: ./flask
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./flask:/mnt
+    networks:
+      gps_net:
+        ipv4_address: 172.20.0.2
+    tty: true
+    environment:
+      TZ: Asia/Tokyo
+      FLASK_APP: run.py
+      FLASK_ENV: development
+    command: flask run -h 0.0.0.0
+
+networks:
+  gps_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
+
