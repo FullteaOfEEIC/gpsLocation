@@ -15,6 +15,7 @@ services:
     build: ./flask
     ports:
       - "5000:5000"
+      - "18888:8888"
     volumes:
       - ./flask:/mnt
     networks:
@@ -25,7 +26,8 @@ services:
       TZ: Asia/Tokyo
       FLASK_APP: run.py
       FLASK_ENV: development
-    command: flask run -h 0.0.0.0
+    #command: flask run -h 0.0.0.0
+    command: jupyter notebook --allow-root
 
 networks:
   gps_net:
