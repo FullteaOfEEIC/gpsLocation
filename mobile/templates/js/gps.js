@@ -2,6 +2,8 @@ function main(){
   getGPS();
 }
 
+alert("js loaded!")
+
 function getGPS(){
   var wOptions = {
     "enableHighAccuracy": true,                       // true : 高精度
