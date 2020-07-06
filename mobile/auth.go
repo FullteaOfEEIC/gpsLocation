@@ -2,12 +2,25 @@ package main
 
 import (
 	"fmt"
-	"github.com/stretchr/gomniauth"
-	"github.com/stretchr/objx/"
 	"log"
 	"net/http"
 	"strings"
+	"github.com/stretchr/objx"
+	"os"
+	"encoding/json"
+	"github.com/stretchr/gomniauth"
+	//"github.com/stretchr/gomniauth/providers/facebook"
+	"github.com/stretchr/gomniauth/providers/github"
+	//"github.com/stretchr/gomniauth/providers/google"
+	"github.com/stretchr/signature"
 )
+
+type Credential struct {
+  Service string `json:service`
+  ClientID string `json:clientID`
+  Secret string `json:secret`
+  Redirect string `json:redirect`
+}
 
 type authHandler struct {
 	next http.Handler
@@ -51,17 +64,17 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatalln("認証を完了できませんでした", err)
 		}
-		user, err = provider.GetUser(creds)
+		user, err := provider.GetUser(creds)
 		if err != nil {
 			log.Fatalln("ユーザーの取得に失敗しました", err)
 		}
 
 		authCookieValue := objx.New(map[string]interface{}{
-			"name": user.name,
+			"name": user.Name,
 		}).MustBase64()
 		http.SetCookie(w, &http.Cookie{
 			Name:  "auth",
-			Value: "authCookieValue",
+			Value: authCookieValue,
 			Path:  "/",
 		})
 		w.Header()["Location"] = []string{"/register"}
@@ -75,4 +88,30 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 func MustAuth(handler http.Handler) http.Handler {
 	return &authHandler{next: handler}
+}
+
+
+func credential(filename string){
+	gomniauth.SetSecurityKey(signature.RandomKey(64))
+	file, err := os.Open(filename)
+  if err != nil {
+    log.Fatalln(err)
+  }
+  defer file.Close()
+	var cred []*Credential
+  decoder := json.NewDecoder(file)
+
+  err =decoder.Decode(&cred)
+  if err != nil {
+    log.Fatalln(err)
+  }
+
+
+	clientID := cred[0].ClientID
+	secret := cred[0].Secret
+	redirect := cred[0].Redirect
+
+	gomniauth.WithProviders(
+		github.New(clientID, secret, redirect),
+	)
 }
