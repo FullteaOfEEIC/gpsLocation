@@ -14,7 +14,6 @@ type templateHandler struct {
 	templ    *template.Template
 }
 
-
 func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t.once.Do(func() {
 		t.templ =
@@ -27,9 +26,10 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func main() {
 	credential("credential.json")
 
-	http.Handle("/register", MustAuth(&templateHandler{filename: "register.html"}))
+	http.Handle("/register", &templateHandler{filename: "register.html"})
 	http.Handle("/login", &templateHandler{filename: "login.html"})
-	http.HandleFunc("/auth/", loginHandler)
+	http.HandleFunc("/auth", loginHandler)
+	http.HandleFunc("/register_core", gpsRegisterHandler)
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal("ListenAndServe:", err)

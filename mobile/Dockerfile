@@ -8,6 +8,8 @@ RUN go get github.com/ugorji/go/codec
 RUN go get github.com/stretchr/signature
 RUN go get github.com/stretchr/gomniauth/
 RUN go get gopkg.in/mgo.v2/bson/
+RUN go get gopkg.in/go-playground/validator.v9/
+RUN go get github.com/go-sql-driver/mysql
 
 COPY . /go/
 
