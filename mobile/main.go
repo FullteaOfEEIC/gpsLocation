@@ -28,8 +28,10 @@ func main() {
 
 	http.Handle("/register", &templateHandler{filename: "register.html"})
 	http.Handle("/login", &templateHandler{filename: "login.html"})
+	http.Handle("/show", &templateHandler{filename: "show.html"})
 	http.HandleFunc("/auth", loginHandler)
 	http.HandleFunc("/register_core", gpsRegisterHandler)
+	http.HandleFunc("/show_core", gpsShowHandler)
 
 	crt := "/ssl/dblec.crt"
 	key := "/ssl/dblec.key"

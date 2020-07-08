@@ -18,6 +18,9 @@ RUN go get github.com/stretchr/gomniauth/
 RUN go get gopkg.in/mgo.v2/bson/
 RUN go get gopkg.in/go-playground/validator.v9/
 RUN go get github.com/go-sql-driver/mysql
+RUN go get github.com/flopp/go-staticmaps
+RUN go get github.com/fogleman/gg
+RUN go get github.com/golang/geo/s2
 
 RUN mkdir /ssl
 COPY --from=cert dblec.crt /ssl

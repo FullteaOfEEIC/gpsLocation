@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"gopkg.in/go-playground/validator.v9"
 	"log"
 	"net/http"
 	"strconv"
@@ -12,20 +11,7 @@ import (
   _ "github.com/go-sql-driver/mysql"
 )
 
-type GpsPosition struct {
-	Latitude         float64 `validate:"numeric"`
-	Longitude        float64 `validate:"numeric"`
-	Altitude         float64 `validate:"numeric"`
-	Accuracy         float64 `validate:"numeric"`
-	AltitudeAccuracy float64 `validate:"numeric"`
-	Heading          float64 `validate:"numeric"`
-	Speed            float64 `validate:"numeric"`
-}
 
-func (form *GpsPosition) Validate() (ok bool) {
-	err := validator.New().Struct(*form)
-	return err == nil
-}
 
 func gpsRegisterHandler(w http.ResponseWriter, r *http.Request) {
 	latitude_str := r.FormValue("latitude")
@@ -83,18 +69,15 @@ func gpsRegisterHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatalln("some error occured")
 	}
 
-	db, err := sql.Open("mysql", "root:root@tcp(gps_db:3306)/location")
+	db, err := sql.Open("mysql", dbPath)
 	if err != nil {
 		log.Fatalln("DB access Failed", err)
 	}
 	defer db.Close()
 	var query string = fmt.Sprintf("INSERT INTO gps (event_id, date, latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, speed) VALUES (%d, '%s', %g, %g, %g, %g, %g, %g, %g)", event_id, date, position.Latitude, position.Longitude, position.Altitude, position.Accuracy, position.AltitudeAccuracy, position.Heading, position.Speed)
 
-	log.Println(query)
-  log.Println(date)
 	_, err = db.Query(query)
 	if err != nil {
 		log.Fatalln("err",err)
 	}
-
 }

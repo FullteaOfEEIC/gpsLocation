@@ -1,0 +1,60 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
+
+</head>
+
+<body>
+  <div id="walkmap" style="width:100%;height:100%"></div>
+</body>
+
+<script>
+  function mapper() {
+    points = JSON.parse(this.responseText);
+    var map = L.map('walkmap');
+    L.tileLayer('http://{s}.tile.stamen.com/{variant}/{z}/{x}/{y}.png', {
+        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>',
+        variant: 'toner-lite'
+    }).addTo(map);
+    map.setView([points[0].Latitude, points[0].Longitude], 13);
+    for (point of points) {
+      console.log(point);
+      L.marker([point.Latitude, point.Longitude]).addTo(map);
+    }
+  }
+
+  function main() {
+    xhr.open('GET', "./show_core", false);
+    xhr.send()
+    xhr.abort()
+  }
+  var xhr = new XMLHttpRequest();
+  xhr.addEventListener("load", mapper);
+  xhr.onreadystatechange = function() {
+    switch (xhr.readyState) {
+      case 0:
+        // 未初期化状態.
+        break;
+      case 1: // データ送信中.
+        break;
+      case 2: // 応答待ち.
+        break;
+      case 3: // データ受信中.
+        break;
+      case 4: // データ受信完了.
+        if (xhr.status == 200 || xhr.status == 304) {
+          var data = xhr.responseText; // responseXML もあり
+        } else {
+          console.log('Failed. HttpStatus: ' + xhr.statusText);
+        }
+        break;
+    }
+  };
+
+
+  main()
+</script>
+
+</html>

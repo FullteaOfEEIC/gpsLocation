@@ -9,11 +9,11 @@ CREATE TABLE gps(
   id INT AUTO_INCREMENT PRIMARY KEY,
   event_id INT NOT NULL,
   date DATETIME,
-  latitude FLOAT,
-  longitude FLOAT,
-  altitude FLOAT,
-  accuracy FLOAT,
-  altitudeAccuracy FLOAT,
-  heading INT,
-  speed FLOAT
+  latitude DOUBLE,
+  longitude DOUBLE,
+  altitude DOUBLE,
+  accuracy DOUBLE,
+  altitudeAccuracy DOUBLE,
+  heading DOUBLE,
+  speed DOUBLE
 )
