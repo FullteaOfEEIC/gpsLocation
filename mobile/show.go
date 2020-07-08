@@ -1,20 +1,13 @@
 package main
 
 import (
-  "database/sql"
   "net/http"
-  _ "github.com/go-sql-driver/mysql"
   "log"
   "fmt"
   "encoding/json"
 )
 
 func gpsShowHandler(w http.ResponseWriter, r *http.Request){
-  db, err := sql.Open("mysql", dbPath)
-  if err != nil {
-    log.Fatalln("DB access Failed", err)
-  }
-  defer db.Close()
 
   var query string = "SELECT * FROM gps"
   rows, err := db.Query(query)

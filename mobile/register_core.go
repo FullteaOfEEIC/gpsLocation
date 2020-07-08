@@ -1,14 +1,12 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
   "strings"
-  _ "github.com/go-sql-driver/mysql"
 )
 
 
@@ -69,11 +67,7 @@ func gpsRegisterHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatalln("some error occured")
 	}
 
-	db, err := sql.Open("mysql", dbPath)
-	if err != nil {
-		log.Fatalln("DB access Failed", err)
-	}
-	defer db.Close()
+
 	var query string = fmt.Sprintf("INSERT INTO gps (event_id, date, latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, speed) VALUES (%d, '%s', %g, %g, %g, %g, %g, %g, %g)", event_id, date, position.Latitude, position.Longitude, position.Altitude, position.Accuracy, position.AltitudeAccuracy, position.Heading, position.Speed)
 
 	_, err = db.Query(query)

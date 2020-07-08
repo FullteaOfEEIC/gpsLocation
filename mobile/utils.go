@@ -2,6 +2,8 @@ package main
 
 import (
   "gopkg.in/go-playground/validator.v9"
+  "database/sql"
+  _ "github.com/go-sql-driver/mysql"
 )
 
 type GpsPosition struct {
@@ -20,3 +22,4 @@ func (form *GpsPosition) Validate() (ok bool) {
 }
 
 const dbPath string = "root:root@tcp(gps_db:3306)/location"
+var db, err = sql.Open("mysql", dbPath)
