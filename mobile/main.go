@@ -31,7 +31,9 @@ func main() {
 	http.HandleFunc("/auth", loginHandler)
 	http.HandleFunc("/register_core", gpsRegisterHandler)
 
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	crt := "/ssl/dblec.crt"
+	key := "/ssl/dblec.key"
+	if err := http.ListenAndServeTLS(":8080", crt, key, nil); err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
 
