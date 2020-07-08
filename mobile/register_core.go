@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+  "strings"
   _ "github.com/go-sql-driver/mysql"
 )
 
@@ -73,24 +74,27 @@ func gpsRegisterHandler(w http.ResponseWriter, r *http.Request) {
 		Speed:            speed,
 	}
 	event_id := 0
-	date := time.Now().Format("1970-01-01 00:00:01.000000")
+	date_time := time.Now()
+  date_split := strings.Split(date_time.String(), " ")
+  date := date_split[0]+" "+date_split[1]
 
 	ok := position.Validate()
 	if !ok {
 		log.Fatalln("some error occured")
 	}
 
-	db, err := sql.Open("mysql", "root:@db/location")
+	db, err := sql.Open("mysql", "root:root@tcp(gps_db:3306)/location")
 	if err != nil {
 		log.Fatalln("DB access Failed", err)
 	}
 	defer db.Close()
-	var query string = fmt.Sprintf("INSERT INTO gps (event_id, date, latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, speed) VALUES (%d, %s, %g, %g, %g, %g, %g, %g, %g)", event_id, date, position.Latitude, position.Longitude, position.Altitude, position.Accuracy, position.AltitudeAccuracy, position.Heading, position.Speed)
+	var query string = fmt.Sprintf("INSERT INTO gps (event_id, date, latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, speed) VALUES (%d, '%s', %g, %g, %g, %g, %g, %g, %g)", event_id, date, position.Latitude, position.Longitude, position.Altitude, position.Accuracy, position.AltitudeAccuracy, position.Heading, position.Speed)
 
 	log.Println(query)
+  log.Println(date)
 	_, err = db.Query(query)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("err",err)
 	}
 
 }

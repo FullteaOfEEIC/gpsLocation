@@ -5,7 +5,7 @@
     function getGPS() {
       var wOptions = {
         "enableHighAccuracy": true, // true : 高精度
-        "timeout": 1000, // タイムアウト : ミリ秒
+        "timeout": 10000, // タイムアウト : ミリ秒
         "maximumAge": 0 // データをキャッシュ時間 : ミリ秒
       };
       var id = navigator.geolocation.watchPosition(getGPSsuccess, getGPSFailure, wOptions);
