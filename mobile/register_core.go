@@ -1,86 +1,63 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
-	"strconv"
+	//"strconv"
+	"strings"
 	"time"
-  "strings"
-	"database/sql"
-  _ "github.com/go-sql-driver/mysql"
+	"encoding/json"
 )
 
-
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
 
 func gpsRegisterHandler(w http.ResponseWriter, r *http.Request) {
-	latitude_str := r.FormValue("latitude")
-	latitude, err := strconv.ParseFloat(latitude_str, 64)
-	if err != nil {
-		latitude = 0
-	}
-	longitude_str := r.FormValue("longitude")
-	longitude, err := strconv.ParseFloat(longitude_str, 64)
-	if err != nil {
-		longitude = 0
-	}
-	altitude_str := r.FormValue("altitude")
-	altitude, err := strconv.ParseFloat(altitude_str, 64)
-	if err != nil {
-		altitude = 0
-	}
-	accuracy_str := r.FormValue("accuracy")
-	accuracy, err := strconv.ParseFloat(accuracy_str, 64)
-	if err != nil {
-		accuracy = 0
-	}
 
-	altitudeAccuracy_str := r.FormValue("altitudeAccuracy")
-	altitudeAccuracy, err := strconv.ParseFloat(altitudeAccuracy_str, 64)
+	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		altitudeAccuracy = 0
+		log.Fatal("error upgrading GET request to a websocket:", err)
 	}
-	heading_str := r.FormValue("heading")
-	heading, err := strconv.ParseFloat(heading_str, 64)
-	if err != nil {
-		heading = 0
-	}
-	speed_str := r.FormValue("speed")
-	speed, err := strconv.ParseFloat(speed_str, 64)
-	if err != nil {
-		speed = 0
-	}
-	position := GpsPosition{
-		Latitude:         latitude,
-		Longitude:        longitude,
-		Altitude:         altitude,
-		Accuracy:         accuracy,
-		AltitudeAccuracy: altitudeAccuracy,
-		Heading:          heading,
-		Speed:            speed,
-	}
-	event_id := 0
-	date_time := time.Now()
-  date_split := strings.Split(date_time.String(), " ")
-  date := date_split[0]+" "+date_split[1]
-
-	ok := position.Validate()
-	if !ok {
-		log.Fatalln("some error occured")
-	}
-
+	defer conn.Close()
 	db, err := sql.Open("mysql", dbPath)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	defer db.Close()
 
+	for {
+		_, p, err := conn.ReadMessage()
+		if err != nil {
+			log.Println("error websocket reading:", err)
+			return
+		}
+		var position GpsPosition
+		err = json.Unmarshal(p, &position)
+		if err != nil {
+			log.Println("parse json error:", err)
+			return
+		}
+		ok := position.Validate()
+		if !ok {
+			log.Println("some error occured. Validation failed.")
+			return
+		}
 
-	var query string = fmt.Sprintf("INSERT INTO gps (event_id, date, latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, speed) VALUES (%d, '%s', %g, %g, %g, %g, %g, %g, %g)", event_id, date, position.Latitude, position.Longitude, position.Altitude, position.Accuracy, position.AltitudeAccuracy, position.Heading, position.Speed)
+		event_id := 0
+		date_time := time.Now()
+		date_split := strings.Split(date_time.String(), " ")
+		date := date_split[0] + " " + date_split[1]
 
-	_, err = db.Query(query)
-	if err != nil {
-		log.Fatalln("err",err)
+		var query string = fmt.Sprintf("INSERT INTO gps (event_id, date, latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, speed) VALUES (%d, '%s', %g, %g, %g, %g, %g, %g, %g)", event_id, date, position.Latitude, position.Longitude, position.Altitude, position.Accuracy, position.AltitudeAccuracy, position.Heading, position.Speed)
+		_, err = db.Query(query)
+		if err != nil {
+			log.Println("err writeing db:", err)
+		}
 	}
-	db.Close()
 }

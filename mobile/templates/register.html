@@ -13,42 +13,32 @@
     }
 
     function getGPSsuccess(pos) {
-      var xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        switch (xhr.readyState) {
-          case 0:
-            // 未初期化状態.
-            break;
-          case 1: // データ送信中.
-            break;
-          case 2: // 応答待ち.
-            break;
-          case 3: // データ受信中.
-            break;
-          case 4: // データ受信完了.
-            if (xhr.status == 200 || xhr.status == 304) {
-              var data = xhr.responseText; // responseXML もあり
-            } else {
-              console.log('Failed. HttpStatus: ' + xhr.statusText);
-            }
-            break;
-        }
-      };
       var crd = pos.coords;
-      xhr.open('POST', './register_core', false);
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      data = 'latitude=' + crd.latitude + '&longitude=' + crd.longitude + '&altitude=' + crd.altitude + '&accuracy='+crd.accuracy+'&altitudeAccuracy='+crd.altitudeAccuracy+'&heading='+crd.heading+'&speed='+crd.speed
-      xhr.send(data)
-      xhr.abort()
+      var msg = {
+        "Latitude": crd.latitude,
+        "Longitude": crd.longitude,
+        "Altitude": crd.altitude,
+        "Accuracy": crd.accuracy,
+        "AltitudeAccuracy": crd.altitudeAccuracy,
+        "Heading": crd.heading,
+        "Speed": crd.speed
+      };
+
+      regSocket.send(JSON.stringify(msg))
+
+
       document.getElementById("latitude").innerHTML = "latitude:" + crd.latitude + "\n";
       document.getElementById("longitude").innerHTML = "longitude:" + crd.longitude + "\n";
       document.getElementById("altitude").innerHTML = "altitude:" + crd.altitude + "\n"
+      document.getElementById("heading").innerHTML = "heading:" + crd.heading+"\n"
     }
 
     function getGPSFailure(args) {
       console.log("failure");
       console.log(args)
     }
+
+    var regSocket = new WebSocket("wss://localhost:8080/register_core")
 
 
 
@@ -61,4 +51,5 @@
   <p id="latitude">latitude:</p>
   <p id="longitude">longitude:</p>
   <p id="altitude">altitude:</p>
+  <p id="heading">heading:</p>
 </body>

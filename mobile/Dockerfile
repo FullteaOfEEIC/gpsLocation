@@ -21,6 +21,7 @@ RUN go get github.com/go-sql-driver/mysql
 RUN go get github.com/flopp/go-staticmaps
 RUN go get github.com/fogleman/gg
 RUN go get github.com/golang/geo/s2
+RUN go get github.com/gorilla/websocket
 
 RUN mkdir /ssl
 COPY --from=cert dblec.crt /ssl
