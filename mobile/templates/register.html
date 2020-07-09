@@ -30,7 +30,7 @@
       document.getElementById("latitude").innerHTML = "latitude:" + crd.latitude + "\n";
       document.getElementById("longitude").innerHTML = "longitude:" + crd.longitude + "\n";
       document.getElementById("altitude").innerHTML = "altitude:" + crd.altitude + "\n"
-      document.getElementById("heading").innerHTML = "heading:" + crd.heading+"\n"
+      document.getElementById("heading").innerHTML = "heading:" + crd.heading + "\n"
     }
 
     function getGPSFailure(args) {
@@ -38,7 +38,15 @@
       console.log(args)
     }
 
-    var regSocket = new WebSocket("wss://localhost:8080/register_core")
+    var loc = window.location,
+      new_uri;
+    if (loc.protocol === "https:") {
+      new_uri = "wss:";
+    } else {
+      new_uri = "ws:";
+    }
+    new_uri += "//" + loc.host + "/register_core";
+    var regSocket = new WebSocket(new_uri)
 
 
 
