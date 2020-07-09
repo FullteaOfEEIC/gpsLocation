@@ -5,6 +5,8 @@ flask/.DS_Store
 
 *.swp
 
+*.pem
+
 flask/__pycache__/
 
 mysql/mysql_data/#innodb_temp/
