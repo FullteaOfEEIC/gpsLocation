@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
-	//"strconv"
 	"strings"
 	"time"
 	"encoding/json"
@@ -48,6 +47,7 @@ func gpsRegisterHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("some error occured. Validation failed.")
 			return
 		}
+		fmt.Println(position)
 
 		event_id := 0
 		date_time := time.Now()
