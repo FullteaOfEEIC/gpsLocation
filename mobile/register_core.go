@@ -60,4 +60,5 @@ func gpsRegisterHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("err writing db:", err)
 		}
 	}
+	db.close()
 }
