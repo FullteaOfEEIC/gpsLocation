@@ -19,10 +19,10 @@
         variant: 'toner-lite'
     }).addTo(map);
     map.setView([points[0].Latitude, points[0].Longitude], 13);
-    for (point of points) {
-      console.log(point);
-      L.marker([point.Latitude, point.Longitude]).addTo(map);
-    }
+    points = points.map(function(point){
+      return [point.Latitude, point.Longitude]
+    });
+    var line = L.polyline(points).addTo(map);
   }
 
   function main() {
