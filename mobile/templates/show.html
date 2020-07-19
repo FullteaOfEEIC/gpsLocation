@@ -28,7 +28,10 @@
           tmp.push([point.Latitude,point.Longitude]);
         }
       })
-      L.polyline(tmp,{"color":"#"+event.toString(16)}).addTo(map);
+      color = event.toString(16);
+      color = ('000000' + color).slice(-6);
+      color = "#" + color.toUpperCase();
+      L.polyline(tmp,{"color":color}).addTo(map);
     });
     //var line = L.polyline(points).addTo(map);
   }
