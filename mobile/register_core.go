@@ -31,7 +31,7 @@ func gpsRegisterHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatalln(err)
 	}
 	defer db.Close()
-	event_id := rand.Intn(10000)
+	event_id := rand.Intn(256*256*256-1)
 	for {
 		_, p, err := conn.ReadMessage()
 		if err != nil {

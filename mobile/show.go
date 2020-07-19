@@ -21,13 +21,13 @@ func gpsShowHandler(w http.ResponseWriter, r *http.Request){
     log.Fatalln("DB load Failed",err)
   }
   defer rows.Close()
-  var locations []GpsPosition
+  var locations []GpsPositionWithEventID
   for rows.Next(){
-    var location GpsPosition
-    var event_id int64
+    var location GpsPositionWithEventID
+
     var id int64
     var date string
-    err := rows.Scan(&id, &event_id, &date, &location.Latitude, &location.Longitude, &location.Altitude,&location.Accuracy, &location.AltitudeAccuracy, &location.Heading, &location.Speed)
+    err := rows.Scan(&id, &location.Event_ID, &date, &location.Latitude, &location.Longitude, &location.Altitude,&location.Accuracy, &location.AltitudeAccuracy, &location.Heading, &location.Speed)
     if err != nil {
       log.Fatalln("Db parse Failed", err)
     }

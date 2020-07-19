@@ -14,6 +14,11 @@ type GpsPosition struct {
 	Speed            float64 `validate:"numeric"`
 }
 
+type GpsPositionWithEventID struct{
+  GpsPosition
+  Event_ID float64
+}
+
 func (form *GpsPosition) Validate() (ok bool) {
 	err := validator.New().Struct(*form)
 	return err == nil
