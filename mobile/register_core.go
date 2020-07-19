@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 	"encoding/json"
+	"math/rand"
 )
 
 var upgrader = websocket.Upgrader{
@@ -18,6 +19,7 @@ var upgrader = websocket.Upgrader{
 }
 
 func gpsRegisterHandler(w http.ResponseWriter, r *http.Request) {
+	rand.Seed(time.Now().UnixNano())
 
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -49,7 +51,7 @@ func gpsRegisterHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Println(position)
 
-		event_id := 0
+		event_id := rand.Intn(10000)
 		date_time := time.Now()
 		date_split := strings.Split(date_time.String(), " ")
 		date := date_split[0] + " " + date_split[1]
