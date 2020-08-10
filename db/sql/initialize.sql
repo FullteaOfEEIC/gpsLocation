@@ -16,4 +16,4 @@ CREATE TABLE gps(
   altitudeAccuracy DOUBLE,
   heading DOUBLE,
   speed DOUBLE
-)
+);
